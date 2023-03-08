@@ -1,10 +1,14 @@
 ---
 title: "About Me"
+image: images/head2.jpg
+about: 
+  template: jolla
+  image-shape: rounded
+  links: 
+    - text: LinkedIn
+      icon: linkedin
+      href: https://www.linkedin.com/in/j-mac-d-7741b7124/
 ---
-
-Hi!
-
-![](images/head2.jpg){fig-align="left" width="350"}
 
 Data Scientist at [Telligen, Inc.](https://www.telligenqiconnect.com/)
 
