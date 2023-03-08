@@ -148,10 +148,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html">
- <span class="menu-text">About</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link active" href="./icd.html" aria-current="page">
  <span class="menu-text">ICD</span></a>
   </li>  
@@ -201,18 +197,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stopwords)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'stopwords' was built under R version 4.2.2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cluster)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tokenizers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'tokenizers' was built under R version 4.2.2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
 ✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
@@ -223,7 +213,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gplots)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'gplots' was built under R version 4.2.2</code></pre>
 </div>
@@ -235,71 +224,69 @@ The following object is masked from 'package:stats':
 
     lowess</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(writexl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: package 'writexl' was built under R version 4.2.2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can add options to executable code like this</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>icd<span class="ot">=</span> <span class="fu">read_xlsx</span>(<span class="st">"C:</span><span class="sc">\\</span><span class="st">Users</span><span class="sc">\\</span><span class="st">macde</span><span class="sc">\\</span><span class="st">OneDrive</span><span class="sc">\\</span><span class="st">Desktop</span><span class="sc">\\</span><span class="st">Projects</span><span class="sc">\\</span><span class="st">Section111ValidICD10-Jan2023-DupFixed.xlsx"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>icd<span class="sc">$</span>type<span class="ot">&lt;-</span> <span class="fu">substr</span>(icd<span class="sc">$</span>CODE,<span class="dv">1</span>,<span class="dv">1</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>icd<span class="sc">$</span>tokens<span class="ot">&lt;-</span> <span class="fu">tokenize_word_stems</span>(icd<span class="sc">$</span><span class="st">`</span><span class="at">LONG DESCRIPTION (VALID ICD-10 FY2023)</span><span class="st">`</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">stopwords =</span> stopwords<span class="sc">::</span><span class="fu">stopwords</span>(<span class="st">'en'</span>))</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>icd_abc<span class="ot">&lt;-</span>icd[icd<span class="sc">$</span>type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"F"</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">6</span>)]</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>mat_sz<span class="ot">&lt;-</span> <span class="fu">length</span>(icd_abc<span class="sc">$</span>CODE)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>jaccard_mat<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="at">nrow=</span>mat_sz,<span class="at">ncol=</span>mat_sz)</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(jaccard_mat)<span class="ot">&lt;-</span>icd_abc<span class="sc">$</span>CODE</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(jaccard_mat)<span class="ot">&lt;-</span>icd_abc<span class="sc">$</span>CODE</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (idx <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>mat_sz){</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>idx){</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    code1<span class="ot">&lt;-</span> icd_abc[[<span class="st">'CODE'</span>]][idx]</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    desc1<span class="ot">&lt;-</span> icd_abc<span class="sc">$</span>tokens[icd_abc<span class="sc">$</span>CODE<span class="sc">==</span>code1]</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    code2<span class="ot">&lt;-</span> icd_abc[[<span class="st">'CODE'</span>]][j]</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    desc2<span class="ot">&lt;-</span> icd_abc<span class="sc">$</span>tokens[icd_abc<span class="sc">$</span>CODE<span class="sc">==</span>code2]</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    simm <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">intersect</span>(<span class="fu">unlist</span>(desc1),<span class="fu">unlist</span>(desc2)))<span class="sc">/</span></span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">length</span>(<span class="fu">union</span>(<span class="fu">unlist</span>(desc1),<span class="fu">unlist</span>(desc2)))</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    jaccard_mat[code1,code2]<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">-</span>simm</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    jaccard_mat[code2,code1]<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">-</span>simm</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap.2</span>(<span class="dv">1</span><span class="sc">-</span>jaccard_mat, <span class="at">dendrogram =</span> <span class="st">'none'</span>, <span class="at">Rowv =</span> <span class="cn">TRUE</span>, <span class="at">Colv =</span> <span class="cn">TRUE</span>, <span class="at">trace =</span> <span class="st">'none'</span>, <span class="at">symm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>icd<span class="ot">=</span> <span class="fu">read_xlsx</span>(<span class="st">"C:</span><span class="sc">\\</span><span class="st">Users</span><span class="sc">\\</span><span class="st">macde</span><span class="sc">\\</span><span class="st">OneDrive</span><span class="sc">\\</span><span class="st">Desktop</span><span class="sc">\\</span><span class="st">Projects</span><span class="sc">\\</span><span class="st">Section111ValidICD10-Jan2023-DupFixed.xlsx"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>icd<span class="sc">$</span>type<span class="ot">&lt;-</span> <span class="fu">substr</span>(icd<span class="sc">$</span>CODE,<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>icd<span class="sc">$</span>tokens<span class="ot">&lt;-</span> <span class="fu">tokenize_word_stems</span>(icd<span class="sc">$</span><span class="st">`</span><span class="at">LONG DESCRIPTION (VALID ICD-10 FY2023)</span><span class="st">`</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">stopwords =</span> stopwords<span class="sc">::</span><span class="fu">stopwords</span>(<span class="st">'en'</span>))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>icd_abc<span class="ot">&lt;-</span>icd[icd<span class="sc">$</span>type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"F"</span>),<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">6</span>)]</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>mat_sz<span class="ot">&lt;-</span> <span class="fu">length</span>(icd_abc<span class="sc">$</span>CODE)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>jaccard_mat<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="at">nrow=</span>mat_sz,<span class="at">ncol=</span>mat_sz)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(jaccard_mat)<span class="ot">&lt;-</span>icd_abc<span class="sc">$</span>CODE</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(jaccard_mat)<span class="ot">&lt;-</span>icd_abc<span class="sc">$</span>CODE</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (idx <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>mat_sz){</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>idx){</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    code1<span class="ot">&lt;-</span> icd_abc[[<span class="st">'CODE'</span>]][idx]</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    desc1<span class="ot">&lt;-</span> icd_abc<span class="sc">$</span>tokens[icd_abc<span class="sc">$</span>CODE<span class="sc">==</span>code1]</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    code2<span class="ot">&lt;-</span> icd_abc[[<span class="st">'CODE'</span>]][j]</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    desc2<span class="ot">&lt;-</span> icd_abc<span class="sc">$</span>tokens[icd_abc<span class="sc">$</span>CODE<span class="sc">==</span>code2]</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    simm <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">intersect</span>(<span class="fu">unlist</span>(desc1),<span class="fu">unlist</span>(desc2)))<span class="sc">/</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">length</span>(<span class="fu">union</span>(<span class="fu">unlist</span>(desc1),<span class="fu">unlist</span>(desc2)))</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    jaccard_mat[code1,code2]<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">-</span>simm</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    jaccard_mat[code2,code1]<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">-</span>simm</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap.2</span>(<span class="dv">1</span><span class="sc">-</span>jaccard_mat, <span class="at">dendrogram =</span> <span class="st">'none'</span>, <span class="at">Rowv =</span> <span class="cn">TRUE</span>, <span class="at">Colv =</span> <span class="cn">TRUE</span>, <span class="at">trace =</span> <span class="st">'none'</span>, <span class="at">symm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="icd_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>clust<span class="ot">&lt;-</span><span class="fu">agnes</span>(<span class="at">x=</span>jaccard_mat,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss=</span><span class="cn">TRUE</span>,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">method=</span><span class="st">'weighted'</span>)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#low coeff =&gt; tight clusters =&gt; fewer bins</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>j<span class="ot">=</span><span class="fu">ceiling</span>((<span class="dv">1</span><span class="sc">-</span>clust<span class="sc">$</span>ac)<span class="sc">*</span>mat_sz)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>grp<span class="ot">&lt;-</span><span class="fu">cutree</span>(clust,<span class="at">k=</span>j)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">table</span>(grp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>clust<span class="ot">&lt;-</span><span class="fu">agnes</span>(<span class="at">x=</span>jaccard_mat,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">diss=</span><span class="cn">TRUE</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">method=</span><span class="st">'ward'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#low coeff =&gt; tight clusters =&gt; fewer bins</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>j<span class="ot">=</span><span class="fu">ceiling</span>((<span class="dv">1</span><span class="sc">-</span>clust<span class="sc">$</span>ac)<span class="sc">*</span>mat_sz)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>grp<span class="ot">&lt;-</span><span class="fu">cutree</span>(clust,<span class="at">k=</span>j)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">table</span>(grp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="icd_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">table</span>(grp),<span class="at">breaks =</span> <span class="fu">ceiling</span>(j<span class="sc">/</span><span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">table</span>(grp),<span class="at">breaks =</span> <span class="fu">ceiling</span>(j<span class="sc">/</span><span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="icd_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(clust,which.plots = 2)</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dendr_grp=rect.hclust(clust,</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                       k=j,</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                       border=2:j)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(clust,which.plots = 2)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dendr_grp=rect.hclust(clust,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#                       k=j,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                       border=2:j)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>clust_labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">colnames</span>(jaccard_mat),grp)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">merge</span>(icd_abc,clust_labs,<span class="at">by.x=</span><span class="st">"CODE"</span>,<span class="at">by.y=</span><span class="st">"colnames.jaccard_mat."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>clust_labs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">colnames</span>(jaccard_mat),grp)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>out<span class="ot">&lt;-</span><span class="fu">merge</span>(icd_abc,clust_labs,<span class="at">by.x=</span><span class="st">"CODE"</span>,<span class="at">by.y=</span><span class="st">"colnames.jaccard_mat."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A range of 859 ICD-10 codes is now grouped into 282 families.</p>
 <p>Choices that impact clustering:</p>

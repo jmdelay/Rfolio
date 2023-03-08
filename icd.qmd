@@ -4,6 +4,7 @@ author: "J. Mac DeLay"
 ---
 
 ```{r}
+#| echo: false
 library(readxl)
 library(stopwords)
 library(cluster)
@@ -53,7 +54,7 @@ heatmap.2(1-jaccard_mat, dendrogram = 'none', Rowv = TRUE, Colv = TRUE, trace = 
 ```{r}
 clust<-agnes(x=jaccard_mat,
              diss=TRUE,
-             method='weighted')
+             method='ward')
 #low coeff => tight clusters => fewer bins
 j=ceiling((1-clust$ac)*mat_sz)
 grp<-cutree(clust,k=j)
