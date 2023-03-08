@@ -3,12 +3,12 @@ project:
   output-dir: docs
 
 website:
-  title: "Rfolio"
+  title: "Mac's Rfolio"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
+      - icd.qmd
 
 format:
   html:

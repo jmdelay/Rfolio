@@ -1,11 +1,13 @@
 ---
-title: "Rfolio"
+title: "About Me"
 ---
 
-This is a Quarto website.
+Hi!
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+![](images/head2.jpg){fig-align="left" width="350"}
 
-```{r}
-1 + 1
-```
+Data Scientist at [Telligen, Inc.](https://www.telligenqiconnect.com/)
+
+MSPH in Biostatistics, University of Alabama at Birmingham
+
+BS in Mathematics and Applied Computation, Birmingham-Southern College

@@ -1,0 +1,91 @@
+---
+title: "ICD"
+author: "J. Mac DeLay"
+---
+
+```{r}
+library(readxl)
+library(stopwords)
+library(cluster)
+library(stats)
+library(tokenizers)
+library(tidyverse)
+library(gplots)
+library(writexl)
+library(SnowballC)
+```
+
+You can add options to executable code like this
+
+```{r}
+icd= read_xlsx("C:\\Users\\macde\\OneDrive\\Desktop\\Projects\\Section111ValidICD10-Jan2023-DupFixed.xlsx")
+icd$type<- substr(icd$CODE,1,1)
+
+icd$tokens<- tokenize_word_stems(icd$`LONG DESCRIPTION (VALID ICD-10 FY2023)`,
+                                 stopwords = stopwords::stopwords('en'))
+
+icd_abc<-icd[icd$type %in% c("F"),c(1,3,5,6)]
+
+mat_sz<- length(icd_abc$CODE)
+jaccard_mat<-matrix(nrow=mat_sz,ncol=mat_sz)
+colnames(jaccard_mat)<-icd_abc$CODE
+rownames(jaccard_mat)<-icd_abc$CODE
+
+for (idx in 1:mat_sz){
+  for (j in 1:idx){
+    code1<- icd_abc[['CODE']][idx]
+    desc1<- icd_abc$tokens[icd_abc$CODE==code1]
+    
+    code2<- icd_abc[['CODE']][j]
+    desc2<- icd_abc$tokens[icd_abc$CODE==code2]
+    
+    simm <- length(intersect(unlist(desc1),unlist(desc2)))/
+      length(union(unlist(desc1),unlist(desc2)))
+    
+    jaccard_mat[code1,code2]<-1-simm
+    jaccard_mat[code2,code1]<-1-simm
+    
+  }
+}
+heatmap.2(1-jaccard_mat, dendrogram = 'none', Rowv = TRUE, Colv = TRUE, trace = 'none', symm = TRUE)
+```
+
+```{r}
+clust<-agnes(x=jaccard_mat,
+             diss=TRUE,
+             method='weighted')
+#low coeff => tight clusters => fewer bins
+j=ceiling((1-clust$ac)*mat_sz)
+grp<-cutree(clust,k=j)
+plot(table(grp))
+hist(table(grp),breaks = ceiling(j/10))
+
+# plot(clust,which.plots = 2)
+# dendr_grp=rect.hclust(clust,
+#                       k=j,
+#                       border=2:j)
+```
+
+```{r}
+clust_labs <- data.frame(colnames(jaccard_mat),grp)
+out<-merge(icd_abc,clust_labs,by.x="CODE",by.y="colnames.jaccard_mat.")
+
+```
+
+A range of 859 ICD-10 codes is now grouped into 282 families.
+
+Choices that impact clustering:
+
+-   Tokenizing
+
+-   Distance function
+
+-   agg vs div vs other clustering
+
+-   AGNES method
+
+-   number of groups
+
+## To-Do:
+
+Investigate a loss function to search parameters and reduce analyst intervention.
