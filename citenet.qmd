@@ -1,0 +1,50 @@
+---
+title: "CiteNet"
+author: "J. Mac DeLay"
+jupyter: python3
+---
+
+Wouldnt it be crazy if python worked too?
+
+```{python}
+import networkx as nx
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy as sp
+import pandas as pd
+import json
+#from semanticscholar import SemanticScholar
+import sys
+#import habanero
+import crossref_commons.retrieval
+from pybliometrics.scopus import *
+
+```
+
+```{python}
+ranks = pd.read_csv("C:\\Users\\macde\\OneDrive\\Desktop\\Projects\\Rfolio\\Rfolio\\docs\\table2.csv")
+
+ranks.head()
+
+ranks = ranks[ranks['year']!='missing']
+ranks['year'] = ranks['year'].astype(float)
+money = ranks[ranks['author'].str.contains("MoneyJ")==True]
+
+plt.scatter(x=ranks['year'], y=np.log(ranks['PageRank']),alpha=.175)
+plt.plot(money['year'], np.log(money['PageRank']), marker='x', ls='none', color='red')
+plt.xlabel("Year of Paper")
+plt.ylabel("Influence (log[PageRank])")
+plt.show()
+```
+
+```{python}
+#| warning: false
+median_line = ranks.groupby(['year']).quantile(.8)
+plt.plot(np.log(median_line['PageRank']))
+plt.plot(money['year'], np.log(money['PageRank']), marker='x', ls='none', color='red')
+plt.xlabel("Year of Paper")
+plt.ylabel("Influence (log[PageRank])")
+plt.title('J. Money Articles against Typical Articles in Research Body')
+plt.legend(['80% quantile','J. Money'])
+plt.show()
+```

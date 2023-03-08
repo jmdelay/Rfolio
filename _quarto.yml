@@ -10,6 +10,8 @@ website:
         text: Home
       - href: icd.qmd
         text: ICD
+      - href: citenet.qmd
+        text: CiteNet
 
 format:
   html:

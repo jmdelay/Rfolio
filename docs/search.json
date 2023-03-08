@@ -26,5 +26,12 @@
     "title": "Clustering ICD Codes",
     "section": "To-Do:",
     "text": "To-Do:\nInvestigate a loss function to search parameters and reduce analyst intervention."
+  },
+  {
+    "objectID": "citenet.html",
+    "href": "citenet.html",
+    "title": "CiteNet",
+    "section": "",
+    "text": "Wouldnt it be crazy if python worked too?\n\nimport networkx as nx\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport scipy as sp\nimport pandas as pd\nimport json\n#from semanticscholar import SemanticScholar\nimport sys\n#import habanero\nimport crossref_commons.retrieval\nfrom pybliometrics.scopus import *\n\n\nranks = pd.read_csv(\"C:\\\\Users\\\\macde\\\\OneDrive\\\\Desktop\\\\Projects\\\\Rfolio\\\\Rfolio\\\\docs\\\\table2.csv\")\n\nranks.head()\n\nranks = ranks[ranks['year']!='missing']\nranks['year'] = ranks['year'].astype(float)\nmoney = ranks[ranks['author'].str.contains(\"MoneyJ\")==True]\n\nplt.scatter(x=ranks['year'], y=np.log(ranks['PageRank']),alpha=.175)\nplt.plot(money['year'], np.log(money['PageRank']), marker='x', ls='none', color='red')\nplt.xlabel(\"Year of Paper\")\nplt.ylabel(\"Influence (log[PageRank])\")\nplt.show()\n\n\n\n\n\nmedian_line = ranks.groupby(['year']).quantile(.8)\nplt.plot(np.log(median_line['PageRank']))\nplt.plot(money['year'], np.log(money['PageRank']), marker='x', ls='none', color='red')\nplt.xlabel(\"Year of Paper\")\nplt.ylabel(\"Influence (log[PageRank])\")\nplt.title('J. Money Articles against Typical Articles in Research Body')\nplt.legend(['80% quantile','J. Money'])\nplt.show()"
   }
 ]
