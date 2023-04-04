@@ -1,0 +1,8 @@
+---
+title: "Research"
+author: "J. Mac DeLay"
+---
+
+![](images/poster-01.png)
+
+![](images/HA_poster-1.png)

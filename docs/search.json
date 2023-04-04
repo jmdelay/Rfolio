@@ -16,14 +16,14 @@
   {
     "objectID": "icd.html",
     "href": "icd.html",
-    "title": "Clustering ICD Codes",
+    "title": "ICD Codes",
     "section": "",
     "text": "You can add options to executable code like this\nA range of 859 ICD-10 codes is now grouped into 282 families.\nChoices that impact clustering:"
   },
   {
     "objectID": "icd.html#to-do",
     "href": "icd.html#to-do",
-    "title": "Clustering ICD Codes",
+    "title": "ICD Codes",
     "section": "To-Do:",
     "text": "To-Do:\nInvestigate a loss function to search parameters and reduce analyst intervention."
   },

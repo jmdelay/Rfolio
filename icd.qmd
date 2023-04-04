@@ -1,5 +1,5 @@
 ---
-title: "Clustering ICD Codes"
+title: "ICD Codes"
 author: "J. Mac DeLay"
 ---
 
@@ -17,7 +17,7 @@ library(writexl)
 library(SnowballC)
 ```
 
-You can add options to executable code like this
+The goal is to cluster together groups of similar ICD codes to aggregate any administrative statistics into intelligible categories.
 
 ```{r}
 icd= read_xlsx("C:\\Users\\macde\\OneDrive\\Desktop\\Projects\\Section111ValidICD10-Jan2023-DupFixed.xlsx")
@@ -51,11 +51,13 @@ for (idx in 1:mat_sz){
 }
 heatmap.2(1-jaccard_mat, dendrogram = 'none', Rowv = TRUE, Colv = TRUE, trace = 'none', symm = TRUE)
 ```
+Here we're just looking at F-category (mental/psych) codes. This saves us a little computing power and accuracy because the letters are intended to capture some similarity among codes.
 
+Using a Jaccard similarity score on the English roots of words, we can create a distance matrix for pairwise comparisons of all codes.
 ```{r}
 clust<-agnes(x=jaccard_mat,
              diss=TRUE,
-             method='ward')
+             method='weighted')
 #low coeff => tight clusters => fewer bins
 j=ceiling((1-clust$ac)*mat_sz)
 grp<-cutree(clust,k=j)
@@ -67,7 +69,7 @@ hist(table(grp),breaks = ceiling(j/10))
 #                       k=j,
 #                       border=2:j)
 ```
-
+This process is semi-supervised. I experimented with some agglomeration methods across several groups of codes, and "weighted" seemed to have more intuitive groups. I automate bin size selection based on the agglomeration coefficient (the returned "quality" of clustering).
 ```{r}
 clust_labs <- data.frame(colnames(jaccard_mat),grp)
 out<-merge(icd_abc,clust_labs,by.x="CODE",by.y="colnames.jaccard_mat.")
