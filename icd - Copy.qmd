@@ -1,0 +1,64 @@
+---
+title: "ICD Codes"
+author: "J. Mac DeLay"
+---
+
+```{python}
+#| echo: false
+#| warning: false
+from difflib import SequenceMatcher
+import pandas as pd
+import numpy as np
+```
+
+The goal is to cluster together groups of similar ICD codes to aggregate any administrative statistics into intelligible categories.
+
+```{python}
+icd= pd.read_excel("C:\\Users\\macde\\OneDrive\\Desktop\\Projects\\Section111ValidICD10-Jan2023-DupFixed.xlsx")
+icd['prefix'] = icd['CODE'].str.slice(0,1)
+icd = icd[icd['prefix']=='F']
+
+
+```
+Here we're just looking at F-category (mental/psych) codes. This saves us a little computing power and accuracy because the letters are intended to capture some similarity among codes.
+
+Using a Jaccard similarity score on the English roots of words, we can create a distance matrix for pairwise comparisons of all codes.
+```{r}
+clust<-agnes(x=jaccard_mat,
+             diss=TRUE,
+             method='weighted')
+#low coeff => tight clusters => fewer bins
+j=ceiling((1-clust$ac)*mat_sz)
+grp<-cutree(clust,k=j)
+plot(table(grp))
+hist(table(grp),breaks = ceiling(j/10))
+
+# plot(clust,which.plots = 2)
+# dendr_grp=rect.hclust(clust,
+#                       k=j,
+#                       border=2:j)
+```
+This process is semi-supervised. I experimented with some agglomeration methods across several groups of codes, and "weighted" seemed to have more intuitive groups. I automate bin size selection based on the agglomeration coefficient (the returned "quality" of clustering).
+```{r}
+clust_labs <- data.frame(colnames(jaccard_mat),grp)
+out<-merge(icd_abc,clust_labs,by.x="CODE",by.y="colnames.jaccard_mat.")
+
+```
+
+A range of 859 ICD-10 codes is now grouped into 282 families.
+
+Choices that impact clustering:
+
+-   Tokenizing
+
+-   Distance function
+
+-   agg vs div vs other clustering
+
+-   AGNES method
+
+-   number of groups
+
+## To-Do:
+
+Investigate a loss function to search parameters and reduce analyst intervention.
