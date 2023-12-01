@@ -1,78 +1,80 @@
 ---
 title: "ICD Codes"
 author: "J. Mac DeLay"
+jupyter: python3
 ---
 
-```{r}
+```{python}
 #| echo: false
 #| warning: false
-library(readxl)
-library(stopwords)
-library(cluster)
-library(stats)
-library(tokenizers)
-library(tidyverse)
-library(gplots)
-library(writexl)
-library(SnowballC)
+from difflib import SequenceMatcher
+import pandas as pd
+import numpy as np
+from sklearn.cluster import AgglomerativeClustering
+import matplotlib.pyplot as plt
+from scipy.spatial.distance import squareform
+from sklearn.metrics import silhouette_score
+import re
+# from collection import Counter
 ```
 
 The goal is to cluster together groups of similar ICD codes to aggregate any administrative statistics into intelligible categories.
 
-```{r}
-icd= read_xlsx("C:\\Users\\macde\\OneDrive\\Desktop\\Projects\\Section111ValidICD10-Jan2023-DupFixed.xlsx")
-icd$type<- substr(icd$CODE,1,1)
+```{python}
+icd= pd.read_excel("C:\\Users\\macde\\OneDrive\\Desktop\\Projects\\Section111ValidICD10-Jan2023-DupFixed.xlsx")
+icd['prefix'] = icd['CODE'].str.slice(0,1)
+icd = icd[icd['prefix']=='F']
+icd = icd.reset_index()
+icd['index'] = icd.index
 
-icd$tokens<- tokenize_word_stems(icd$`LONG DESCRIPTION (VALID ICD-10 FY2023)`,
-                                 stopwords = stopwords::stopwords('en'))
-
-icd_abc<-icd[icd$type %in% c("F"),c(1,3,5,6)]
-
-mat_sz<- length(icd_abc$CODE)
-jaccard_mat<-matrix(nrow=mat_sz,ncol=mat_sz)
-colnames(jaccard_mat)<-icd_abc$CODE
-rownames(jaccard_mat)<-icd_abc$CODE
-
-for (idx in 1:mat_sz){
-  for (j in 1:idx){
-    code1<- icd_abc[['CODE']][idx]
-    desc1<- icd_abc$tokens[icd_abc$CODE==code1]
-    
-    code2<- icd_abc[['CODE']][j]
-    desc2<- icd_abc$tokens[icd_abc$CODE==code2]
-    
-    simm <- length(intersect(unlist(desc1),unlist(desc2)))/
-      length(union(unlist(desc1),unlist(desc2)))
-    
-    jaccard_mat[code1,code2]<-1-simm
-    jaccard_mat[code2,code1]<-1-simm
-    
-  }
-}
-heatmap.2(1-jaccard_mat, dendrogram = 'none', Rowv = TRUE, Colv = TRUE, trace = 'none', symm = TRUE)
 ```
 Here we're just looking at F-category (mental/psych) codes. This saves us a little computing power and accuracy because the letters are intended to capture some similarity among codes.
 
-Using a Jaccard similarity score on the English roots of words, we can create a distance matrix for pairwise comparisons of all codes.
-```{r}
-clust<-agnes(x=jaccard_mat,
-             diss=TRUE,
-             method='weighted')
-#low coeff => tight clusters => fewer bins
-j=ceiling((1-clust$ac)*mat_sz)
-grp<-cutree(clust,k=j)
-plot(table(grp))
-hist(table(grp),breaks = ceiling(j/10))
 
-# plot(clust,which.plots = 2)
-# dendr_grp=rect.hclust(clust,
-#                       k=j,
-#                       border=2:j)
+```{python}
+stopwords = ['the', 'of', 'and', 'with', 'without', 'other', 'to', 'due', 'a', 'specified', 'unspecified']
+
+def str_cleaner(str_in):
+  str_in = str_in.lower()
+  str_list = str_in.split()
+  
+  resultwords = [word for word in str_list if word.lower() not in stopwords]
+  result = ' '.join(resultwords)
+  
+  str_out = re.sub(r'\W+', '', result)
+  
+  return str_out
+
+icd['str_out'] = icd["SHORT DESCRIPTION (VALID ICD-10 FY2023)"].apply(str_cleaner)
+icd
+
 ```
-This process is semi-supervised. I experimented with some agglomeration methods across several groups of codes, and "weighted" seemed to have more intuitive groups. I automate bin size selection based on the agglomeration coefficient (the returned "quality" of clustering).
-```{r}
-clust_labs <- data.frame(colnames(jaccard_mat),grp)
-out<-merge(icd_abc,clust_labs,by.x="CODE",by.y="colnames.jaccard_mat.")
+asdf
+```{python}
+N = len(icd)
+dist_mat = np.zeros([N,N])
+
+for i in range(N):
+  for j in range(i):
+    wi = icd.loc[i,'str_out']
+    wj = icd.loc[j,'str_out']
+    if i==j:
+      simm = 1
+    else:
+      simm = SequenceMatcher(None,wi, wj).ratio()
+    dist_mat[i,j] = simm
+    dist_mat[j,i] = simm
+    
+dist_mat = 1-dist_mat
+
+```
+
+```{python}
+
+plt.figure(figsize=(7,7))
+plt.imshow(dist_mat,cmap='hot')
+plt.show()
+
 
 ```
 
